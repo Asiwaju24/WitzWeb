@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WitzClass — Assignment Infrastructure for Education</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   BASE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --white: #ffffff;
+  --off: #fafafa;
+  --off2: #f4f4f5;
+  --off3: #ececee;
+  --ink: #09090b;
+  --ink2: #18181b;
+  --ink3: #27272a;
+  --muted: #71717a;
+  --muted2: #a1a1aa;
+  --border: #e4e4e7;
+  --border2: #d4d4d8;
+  --accent: #2563eb;
+  --accent-light: #eff6ff;
+  --accent-mid: #bfdbfe;
+  --accent2: #0ea5e9;
+  --green: #10b981;
+  --green-light: #ecfdf5;
+  --amber: #f59e0b;
+  --amber-light: #fffbeb;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.07), 0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.09), 0 4px 14px rgba(0,0,0,0.05);
+  --shadow-xl: 0 24px 64px rgba(0,0,0,0.1), 0 8px 24px rgba(0,0,0,0.06);
+}
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  background: var(--white);
+  color: var(--ink);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { display: block; max-width: 100%; }
+a { text-decoration: none; color: inherit; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   UTILITIES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.wrap { max-width: 1140px; margin: 0 auto; padding: 0 40px; }
+.wrap-sm { max-width: 760px; margin: 0 auto; padding: 0 40px; }
+.mono { font-family: 'JetBrains Mono', monospace; }
+.serif { font-family: 'Instrument Serif', serif; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   NAV
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+  height: 64px;
+  display: flex; align-items: center;
+  transition: background 0.3s, box-shadow 0.3s, border-color 0.3s;
+  border-bottom: 1px solid transparent;
+}
+#nav.solid {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(16px);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+.nav-inner {
+  width: 100%; max-width: 1140px; margin: 0 auto; padding: 0 40px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 9px;
+}
+.nav-logo-icon {
+  width: 32px; height: 32px;
+  background: var(--ink);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.nav-logo-icon svg { width: 18px; height: 18px; fill: white; }
+.nav-logo-wordmark {
+  font-size: 17px; font-weight: 700; color: var(--ink);
+  letter-spacing: -0.4px;
+}
+.nav-logo-wordmark sup {
+  font-size: 9px; font-weight: 500; color: var(--accent);
+  letter-spacing: 0.5px; text-transform: uppercase;
+  vertical-align: super; margin-left: 2px;
+}
+.nav-center {
+  display: flex; align-items: center; gap: 4px;
+  background: var(--off);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  padding: 4px 6px;
+}
+.nav-center a {
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 13.5px; font-weight: 500; color: var(--muted);
+  transition: color 0.2s, background 0.2s;
+}
+.nav-center a:hover { color: var(--ink); background: var(--white); }
+.nav-center a.active { color: var(--ink); background: var(--white); box-shadow: var(--shadow-sm); }
+.nav-right { display: flex; align-items: center; gap: 10px; }
+  padding: 8px 18px; border-radius: 50px;
+  font-size: 13.5px; font-weight: 500; color: var(--muted);
+  border: 1px solid transparent;
+  cursor: pointer; transition: all 0.2s; background: none;
+  font-family: inherit;
+}
+.btn-ghost:hover { color: var(--ink); border-color: var(--border); background: var(--off); }
+.btn-dark {
+  padding: 8px 20px; border-radius: 50px;
+  font-size: 13.5px; font-weight: 600; color: white;
+  background: var(--ink); border: 1px solid var(--ink);
+  cursor: pointer; transition: all 0.2s; font-family: inherit;
+  display: flex; align-items: center; gap: 6px;
+}
+.btn-dark:hover { background: var(--ink3); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.btn-dark svg { width: 13px; height: 13px; stroke: white; fill: none; stroke-width: 2.5; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   HERO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#hero {
+  min-height: 100vh;
+  padding: 140px 0 100px;
+  display: flex; align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero-mesh {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 50%, rgba(37,99,235,0.05) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 60% at 80% 20%, rgba(14,165,233,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 70% 80%, rgba(16,185,129,0.03) 0%, transparent 55%);
+}
+.hero-dots {
+  position: absolute; inset: 0; z-index: 0;
+  background-image: radial-gradient(circle, rgba(0,0,0,0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 100% 80% at 50% 50%, black 40%, transparent 80%);
+}
+.hero-content {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center;
+}
+.hero-left {}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 12px 5px 6px;
+  background: var(--accent-light); border: 1px solid var(--accent-mid);
+  border-radius: 50px; margin-bottom: 28px;
+}
+.hero-eyebrow-dot {
+  width: 20px; height: 20px;
+  background: var(--accent); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.hero-eyebrow-dot::after {
+  content: ''; width: 7px; height: 7px;
+  background: white; border-radius: 50%;
+}
+.hero-eyebrow-text {
+  font-size: 12px; font-weight: 600; color: var(--accent);
+  letter-spacing: 0.3px;
+}
+.hero-h1 {
+  font-size: clamp(44px, 5.5vw, 72px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -2.5px;
+  color: var(--ink);
+  margin-bottom: 24px;
+}
+.hero-h1 em {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic; font-weight: 400;
+  color: var(--accent);
+  letter-spacing: -1px;
+}
+.hero-p {
+  font-size: 17px; color: var(--muted); line-height: 1.75;
+  font-weight: 400; margin-bottom: 36px; max-width: 460px;
+}
+.hero-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 48px; }
+.cta-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 24px; border-radius: 50px;
+  background: var(--ink); color: white;
+  font-size: 15px; font-weight: 600; font-family: inherit;
+  border: 1.5px solid var(--ink);
+  transition: all 0.2s; cursor: pointer;
+  box-shadow: var(--shadow-md);
+}
+.cta-primary:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(37,99,235,0.25); }
+.cta-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 24px; border-radius: 50px;
+  background: var(--white); color: var(--ink);
+  font-size: 15px; font-weight: 500; font-family: inherit;
+  border: 1.5px solid var(--border2);
+  transition: all 0.2s; cursor: pointer;
+}
+.cta-secondary:hover { border-color: var(--ink); background: var(--off); }
+.hero-trust {
+  display: flex; align-items: center; gap: 16px;
+  font-size: 13px; color: var(--muted);
+}
+.hero-trust-avatars { display: flex; }
+.hero-trust-avatars span {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: white;
+  margin-left: -8px;
+}
+.hero-trust-avatars span:first-child { margin-left: 0; }
+
+/* Hero right — app mockup */
+.hero-right { position: relative; }
+.mockup-frame {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+  transform: perspective(1200px) rotateY(-8deg) rotateX(2deg);
+  transition: transform 0.5s ease;
+}
+.mockup-frame:hover { transform: perspective(1200px) rotateY(-3deg) rotateX(1deg); }
+.mockup-topbar {
+  background: var(--off);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 18px;
+  display: flex; align-items: center; gap: 10px;
+}
+.mockup-dots { display: flex; gap: 6px; }
+.mockup-dots span { width: 10px; height: 10px; border-radius: 50%; }
+.mockup-dots span:nth-child(1) { background: #ff5f57; }
+.mockup-dots span:nth-child(2) { background: #febc2e; }
+.mockup-dots span:nth-child(3) { background: #28c840; }
+.mockup-url {
+  flex: 1; background: var(--white); border: 1px solid var(--border);
+  border-radius: 6px; padding: 5px 12px;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted2);
+}
+.mockup-body { padding: 22px; }
+.mockup-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;
+}
+.mockup-title { font-size: 16px; font-weight: 700; }
+.mockup-badge {
+  font-size: 11px; font-weight: 600; padding: 3px 10px;
+  border-radius: 50px; background: var(--green-light); color: var(--green);
+  border: 1px solid rgba(16,185,129,0.2);
+}
+.mockup-assignment {
+  background: var(--off); border: 1px solid var(--border);
+  border-radius: var(--r-md); padding: 14px 16px; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 14px;
+  cursor: default; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.mockup-assignment:hover { border-color: var(--accent-mid); box-shadow: 0 0 0 3px rgba(37,99,235,0.06); }
+.mockup-assignment-icon {
+  width: 36px; height: 36px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.mockup-assignment-info { flex: 1; }
+.mockup-assignment-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.mockup-assignment-meta { font-size: 11px; color: var(--muted2); }
+.mockup-assignment-status {
+  font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 50px;
+  flex-shrink: 0;
+}
+.s-submitted { background: var(--green-light); color: var(--green); }
+.s-pending { background: var(--amber-light); color: var(--amber); }
+.s-late { background: #fef2f2; color: #ef4444; }
+.mockup-divider { height: 1px; background: var(--border); margin: 14px 0; }
+.mockup-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.mockup-stat {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 10px 12px; text-align: center;
+}
+.mockup-stat-num { font-size: 22px; font-weight: 800; color: var(--ink); line-height: 1; }
+.mockup-stat-label { font-size: 10px; color: var(--muted2); margin-top: 3px; letter-spacing: 0.3px; }
+.floating-notif {
+  position: absolute; bottom: -20px; left: -40px;
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--r-md); padding: 12px 16px;
+  display: flex; align-items: center; gap: 10px;
+  box-shadow: var(--shadow-lg); min-width: 240px;
+  animation: floatNotif 4s ease-in-out infinite;
+}
+@keyframes floatNotif {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+.notif-icon { width: 32px; height: 32px; border-radius: 9px; background: var(--green-light); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+.notif-title { font-size: 12px; font-weight: 600; color: var(--ink); }
+.notif-sub { font-size: 11px; color: var(--muted2); margin-top: 1px; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   LOGO BAR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#logobar {
+  padding: 28px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--off);
+}
+.logobar-inner {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.logobar-label { font-size: 13px; color: var(--muted2); font-weight: 500; white-space: nowrap; margin-right: 12px; }
+.logobar-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 20px;
+  border-radius: var(--r-sm); border: 1px solid var(--border);
+  background: var(--white); color: var(--muted);
+  font-size: 13.5px; font-weight: 600;
+  transition: all 0.2s;
+}
+.logobar-item:hover { color: var(--ink); border-color: var(--border2); box-shadow: var(--shadow-sm); }
+.logobar-icon { font-size: 16px; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SECTION SCAFFOLDING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.section { padding: 110px 0; }
+.section-alt { background: var(--off); }
+.section-dark { background: var(--ink); }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.8px;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 18px;
+}
+.eyebrow::before { content: ''; display: block; width: 16px; height: 1.5px; background: var(--accent); }
+.h2 {
+  font-size: clamp(34px, 4vw, 52px);
+  font-weight: 800; letter-spacing: -1.8px;
+  line-height: 1.08; color: var(--ink); margin-bottom: 16px;
+}
+.h2 em { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; letter-spacing: -0.5px; }
+.h2-dark { color: white; }
+.lead { font-size: 17px; color: var(--muted); line-height: 1.7; font-weight: 400; max-width: 520px; }
+.lead-dark { color: #a1a1aa; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SERVICES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#services {}
+.services-intro { max-width: 600px; margin-bottom: 72px; }
+.services-bento {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+}
+.bento {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 36px;
+  position: relative; overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+.bento:hover {
+  border-color: var(--border2);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
+}
+.bento-a { grid-column: span 7; } /* big */
+.bento-b { grid-column: span 5; } /* medium */
+.bento-c { grid-column: span 4; } /* small */
+.bento-d { grid-column: span 4; } /* small */
+.bento-e { grid-column: span 4; } /* small */
+.bento-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+  text-transform: uppercase; margin-bottom: 24px;
+  padding: 5px 10px; border-radius: 6px;
+}
+.chip-blue { background: var(--accent-light); color: var(--accent); }
+.chip-green { background: var(--green-light); color: var(--green); }
+.chip-amber { background: var(--amber-light); color: var(--amber); }
+.chip-ink { background: var(--off2); color: var(--ink3); }
+.bento-title {
+  font-size: 22px; font-weight: 700; color: var(--ink);
+  letter-spacing: -0.5px; margin-bottom: 10px; line-height: 1.25;
+}
+.bento-desc { font-size: 14.5px; color: var(--muted); line-height: 1.65; }
+.bento-visual {
+  margin-top: 28px;
+  background: var(--off);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 18px;
+}
+.submission-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px;
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--r-md); margin-bottom: 8px;
+  font-size: 13px;
+  transition: border-color 0.2s;
+}
+.submission-row:hover { border-color: var(--accent-mid); }
+.submission-row:last-child { margin-bottom: 0; }
+.submission-type {
+  width: 30px; height: 30px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+.submission-filename { flex: 1; font-weight: 500; color: var(--ink3); }
+.submission-size { font-size: 11px; color: var(--muted2); }
+.submission-check { color: var(--green); font-size: 14px; font-weight: 700; }
+.grade-display {
+  margin-top: 24px;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+}
+.grade-circle {
+  width: 80px; height: 80px; border-radius: 50%;
+  border: 3px solid var(--accent); display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  box-shadow: 0 0 0 6px var(--accent-light);
+}
+.grade-letter { font-size: 24px; font-weight: 800; color: var(--accent); line-height: 1; }
+.grade-pct { font-size: 10px; color: var(--muted2); margin-top: 1px; }
+.grade-info { font-size: 13px; color: var(--muted); }
+.grade-info strong { color: var(--ink); display: block; font-size: 16px; font-weight: 700; }
+.code-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--ink); color: white;
+  padding: 10px 18px; border-radius: var(--r-md);
+  font-family: 'JetBrains Mono', monospace; font-size: 18px;
+  font-weight: 500; letter-spacing: 3px; margin-top: 20px;
+}
+.code-chip-label { font-size: 10px; font-family: 'Bricolage Grotesque', sans-serif; opacity: 0.5; letter-spacing: 1px; margin-top: 8px; text-align: center; color: var(--muted); }
+.missing-pill {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border-radius: var(--r-md);
+  background: #fef2f2; border: 1px solid #fecaca;
+  font-size: 12px; color: #ef4444; font-weight: 500; margin-bottom: 7px;
+}
+.submitted-pill {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border-radius: var(--r-md);
+  background: var(--green-light); border: 1px solid rgba(16,185,129,0.2);
+  font-size: 12px; color: var(--green); font-weight: 500; margin-bottom: 7px;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   HOW IT WORKS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#how { background: var(--off); }
+.how-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px;
+  border: 1px solid var(--border); border-radius: var(--r-xl); overflow: hidden;
+  margin-top: 64px; box-shadow: var(--shadow-md);
+}
+.how-step {
+  background: var(--white); padding: 40px 32px;
+  transition: background 0.2s;
+  position: relative;
+}
+.how-step:hover { background: var(--accent-light); }
+.how-step::after {
+  content: '';
+  position: absolute; right: -1px; top: 32px;
+  height: calc(100% - 64px); width: 1px;
+  background: var(--border);
+}
+.how-step:last-child::after { display: none; }
+.step-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 500; color: var(--muted2);
+  letter-spacing: 1px; margin-bottom: 24px;
+}
+.step-icon-wrap {
+  width: 52px; height: 52px; border-radius: var(--r-md);
+  background: var(--off2); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; margin-bottom: 20px;
+  transition: background 0.2s, transform 0.2s;
+}
+.how-step:hover .step-icon-wrap { background: white; transform: scale(1.05); }
+.step-title { font-size: 17px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+.step-desc { font-size: 13.5px; color: var(--muted); line-height: 1.6; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   VISION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#vision {
+  background: var(--ink);
+  padding: 120px 0;
+  position: relative; overflow: hidden;
+}
+#vision::before {
+  content: '';
+  position: absolute; top: -200px; right: -200px;
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(37,99,235,0.08) 0%, transparent 65%);
+  pointer-events: none;
+}
+.vision-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+.vision-left {}
+.vision-quote-mark {
+  font-family: 'Instrument Serif', serif;
+  font-size: 80px; line-height: 1; color: rgba(255,255,255,0.06);
+  margin-bottom: -20px; display: block;
+}
+.vision-statement {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(26px, 3.5vw, 40px);
+  font-style: italic; color: white; line-height: 1.4;
+  margin-bottom: 32px;
+}
+.vision-statement em { font-style: normal; color: #93c5fd; }
+.vision-body { font-size: 15px; color: #a1a1aa; line-height: 1.75; margin-bottom: 20px; }
+.vision-pillars { margin-top: 40px; display: flex; flex-direction: column; gap: 1px; border: 1px solid rgba(255,255,255,0.08); border-radius: var(--r-lg); overflow: hidden; }
+.v-pillar {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 22px 24px; background: rgba(255,255,255,0.02);
+  transition: background 0.2s;
+}
+.v-pillar:hover { background: rgba(255,255,255,0.04); }
+.v-pillar-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: rgba(255,255,255,0.2);
+  padding-top: 2px; flex-shrink: 0; width: 24px;
+}
+.v-pillar-title { font-size: 15px; font-weight: 600; color: white; margin-bottom: 4px; }
+.v-pillar-desc { font-size: 13px; color: #71717a; line-height: 1.55; }
+
+.roadmap-timeline { margin-top: 48px; }
+.rt-header {
+  font-size: 12px; font-weight: 600; letter-spacing: 1px;
+  text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 24px;
+}
+.rt-item {
+  display: flex; gap: 20px; align-items: flex-start;
+  padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.rt-item:last-child { border-bottom: none; }
+.rt-indicator { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; padding-top: 4px; }
+.rt-dot {
+  width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
+}
+.rt-dot-done { background: var(--green); box-shadow: 0 0 0 3px rgba(16,185,129,0.15); }
+.rt-dot-now { background: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.2); animation: pulseDot 2s ease-in-out infinite; }
+.rt-dot-next { background: rgba(255,255,255,0.15); }
+@keyframes pulseDot { 0%,100% { box-shadow: 0 0 0 3px rgba(37,99,235,0.2); } 50% { box-shadow: 0 0 0 6px rgba(37,99,235,0.1); } }
+.rt-line { width: 1px; flex: 1; background: rgba(255,255,255,0.06); min-height: 24px; }
+.rt-phase { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 4px; }
+.rt-title { font-size: 15px; font-weight: 600; color: white; margin-bottom: 4px; }
+.rt-desc { font-size: 13px; color: #71717a; line-height: 1.5; }
+.rt-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; margin-left: 8px; }
+.rt-tag-done { background: rgba(16,185,129,0.12); color: var(--green); }
+.rt-tag-now { background: rgba(37,99,235,0.12); color: #93c5fd; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ABOUT / CEO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#about { background: var(--white); }
+.about-layout { display: grid; grid-template-columns: 5fr 7fr; gap: 80px; align-items: start; margin-top: 72px; }
+.ceo-wrap {
+  position: sticky; top: 100px;
+}
+.ceo-card-new {
+  background: var(--off);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+.ceo-card-top {
+  background: linear-gradient(160deg, var(--ink) 0%, var(--ink3) 100%);
+  padding: 40px 36px 32px;
+  position: relative; overflow: hidden;
+}
+.ceo-card-top::after {
+  content: '';
+  position: absolute; bottom: -40px; right: -40px;
+  width: 140px; height: 140px;
+  background: radial-gradient(circle, rgba(37,99,235,0.3), transparent 70%);
+  border-radius: 50%;
+}
+.ceo-initials {
+  width: 72px; height: 72px; border-radius: var(--r-lg);
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; font-weight: 800; color: white; margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(37,99,235,0.4);
+}
+.ceo-name-new { font-size: 26px; font-weight: 800; color: white; letter-spacing: -0.5px; }
+.ceo-role-new { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 4px; font-weight: 500; }
+.ceo-card-bottom { padding: 28px 36px; }
+.ceo-blockquote {
+  font-size: 14.5px; color: var(--muted); line-height: 1.7;
+  font-style: italic; margin-bottom: 24px;
+  padding-left: 16px; border-left: 2px solid var(--accent-mid);
+}
+.ceo-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.ceo-tag {
+  font-size: 12px; font-weight: 500; padding: 5px 12px;
+  border-radius: 50px; background: var(--white);
+  border: 1px solid var(--border); color: var(--ink3);
+}
+.about-text-col {}
+.about-intro { font-size: 20px; font-weight: 600; color: var(--ink); line-height: 1.5; margin-bottom: 24px; letter-spacing: -0.3px; }
+.about-body { font-size: 16px; color: var(--muted); line-height: 1.8; margin-bottom: 18px; }
+.values-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 40px; }
+.val-card {
+  background: var(--off); border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 24px;
+  transition: all 0.2s;
+}
+.val-card:hover { border-color: var(--accent-mid); background: var(--accent-light); box-shadow: var(--shadow-sm); }
+.val-icon { font-size: 26px; margin-bottom: 12px; }
+.val-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+.val-desc { font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   PLATFORM MODES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#platform { background: var(--off); }
+.modes-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 64px; }
+.mode-card-new {
+  border-radius: var(--r-xl); overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.mode-card-new:hover { transform: translateY(-4px); box-shadow: var(--shadow-xl); }
+.mode-top {
+  padding: 44px 40px 36px;
+  position: relative; overflow: hidden;
+}
+.mode-standalone .mode-top { background: var(--ink); }
+.mode-sdk .mode-top {
+  background: linear-gradient(135deg, #0c1a3a 0%, #0d2447 100%);
+}
+.mode-top::before {
+  content: '';
+  position: absolute; top: -60px; right: -60px;
+  width: 200px; height: 200px; border-radius: 50%; filter: blur(60px);
+  pointer-events: none;
+}
+.mode-standalone .mode-top::before { background: rgba(37,99,235,0.2); }
+.mode-sdk .mode-top::before { background: rgba(14,165,233,0.2); }
+.mode-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 5px 12px; border-radius: 50px; display: inline-block; margin-bottom: 22px;
+}
+.mode-standalone .mode-label { background: rgba(37,99,235,0.15); color: #93c5fd; border: 1px solid rgba(37,99,235,0.2); }
+.mode-sdk .mode-label { background: rgba(14,165,233,0.12); color: #7dd3fc; border: 1px solid rgba(14,165,233,0.18); }
+.mode-title-new { font-size: 28px; font-weight: 800; color: white; letter-spacing: -0.5px; margin-bottom: 12px; line-height: 1.2; }
+.mode-desc-new { font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.65; }
+.mode-bottom { background: var(--white); padding: 32px 40px; border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--r-xl) var(--r-xl); }
+.mode-feature-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.mode-feature-list li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 14px; color: var(--muted); line-height: 1.5;
+}
+.mode-feature-list li::before {
+  content: '✓'; font-size: 13px; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+}
+.mode-standalone ~ * .mode-feature-list li::before,
+.mode-feature-list.standalone-list li::before { color: var(--accent); }
+.mode-feature-list.sdk-list li::before { color: var(--accent2); }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   TESTIMONIALS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#testimonials { background: var(--white); }
+.testi-layout { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 64px; }
+.testi-card {
+  background: var(--off); border: 1px solid var(--border);
+  border-radius: var(--r-xl); padding: 36px;
+  display: flex; flex-direction: column; gap: 20px;
+  transition: all 0.2s;
+}
+.testi-card:hover { border-color: var(--border2); box-shadow: var(--shadow-lg); background: var(--white); }
+.testi-card.hero-testi {
+  background: var(--accent); border-color: var(--accent);
+  grid-column: span 1;
+}
+.testi-stars { display: flex; gap: 3px; }
+.star { color: var(--amber); font-size: 14px; }
+.testi-card.hero-testi .star { color: rgba(255,255,255,0.7); }
+.testi-quote {
+  font-size: 15px; line-height: 1.7; color: var(--ink3); flex: 1;
+  font-style: italic;
+}
+.testi-card.hero-testi .testi-quote { color: rgba(255,255,255,0.9); }
+.testi-author { display: flex; align-items: center; gap: 12px; }
+.testi-av {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: white; flex-shrink: 0;
+}
+.testi-name { font-size: 14px; font-weight: 700; color: var(--ink); }
+.testi-role { font-size: 12px; color: var(--muted2); margin-top: 2px; }
+.testi-card.hero-testi .testi-name,
+.testi-card.hero-testi .testi-role { color: rgba(255,255,255,0.8); }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   CTA BAND
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#cta-band {
+  background: var(--ink);
+  padding: 100px 0;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+#cta-band::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(37,99,235,0.1) 0%, transparent 70%);
+}
+#cta-band::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.cta-band-inner { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; }
+.cta-band-title {
+  font-size: clamp(40px, 5vw, 64px); font-weight: 800;
+  letter-spacing: -2px; line-height: 1.05; color: white; margin-bottom: 20px;
+}
+.cta-band-title em { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; color: #93c5fd; }
+.cta-band-sub { font-size: 17px; color: #71717a; margin-bottom: 40px; line-height: 1.65; }
+.cta-band-btns { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.btn-white {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 26px; border-radius: 50px;
+  background: white; color: var(--ink);
+  font-size: 15px; font-weight: 600; font-family: inherit;
+  border: 1.5px solid white;
+  transition: all 0.2s; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(255,255,255,0.1);
+}
+.btn-white:hover { background: var(--off2); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(255,255,255,0.15); }
+.btn-outline-white {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 26px; border-radius: 50px;
+  background: transparent; color: rgba(255,255,255,0.7);
+  font-size: 15px; font-weight: 500; font-family: inherit;
+  border: 1.5px solid rgba(255,255,255,0.15);
+  transition: all 0.2s; cursor: pointer;
+}
+.btn-outline-white:hover { color: white; border-color: rgba(255,255,255,0.4); }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   FOOTER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+footer {
+  background: var(--ink);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 72px 0 36px;
+}
+.footer-top { display: grid; grid-template-columns: 3fr 1fr 1fr 1fr; gap: 56px; margin-bottom: 64px; }
+.footer-brand-col {}
+.footer-logo-row { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+.footer-logo-box {
+  width: 32px; height: 32px; background: white; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+}
+.footer-logo-box svg { width: 18px; height: 18px; fill: var(--ink); }
+.footer-wordmark { font-size: 17px; font-weight: 700; color: white; letter-spacing: -0.3px; }
+.footer-tagline { font-size: 14px; color: #52525b; line-height: 1.65; max-width: 280px; margin-bottom: 24px; }
+.footer-social { display: flex; gap: 8px; }
+.footer-social a {
+  width: 34px; height: 34px; border-radius: 8px;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: #71717a; text-decoration: none;
+  transition: all 0.2s;
+}
+.footer-social a:hover { background: rgba(255,255,255,0.1); color: white; }
+.footer-col-head { font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.25); margin-bottom: 18px; }
+.footer-links { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+.footer-links a { font-size: 14px; color: #52525b; text-decoration: none; transition: color 0.2s; }
+.footer-links a:hover { color: white; }
+.footer-bottom {
+  padding-top: 28px; border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.footer-copy { font-size: 13px; color: #3f3f46; }
+.footer-copy a { color: #52525b; }
+.footer-legal { display: flex; gap: 20px; }
+.footer-legal a { font-size: 13px; color: #3f3f46; text-decoration: none; transition: color 0.2s; }
+.footer-legal a:hover { color: white; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ANIMATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.fade-up {
+  opacity: 0; transform: translateY(28px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-up.in { opacity: 1; transform: translateY(0); }
+.fade-up.d1 { transition-delay: 0.1s; }
+.fade-up.d2 { transition-delay: 0.18s; }
+.fade-up.d3 { transition-delay: 0.26s; }
+.fade-up.d4 { transition-delay: 0.34s; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   MOBILE NAV DRAWER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.mobile-menu {
+  display: none;
+  position: fixed; top: 64px; left: 0; right: 0; bottom: 0;
+  background: rgba(255,255,255,0.98);
+  backdrop-filter: blur(20px);
+  z-index: 899;
+  flex-direction: column;
+  padding: 24px 24px 40px;
+  overflow-y: auto;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu-links {
+  display: flex; flex-direction: column; gap: 4px; margin-bottom: 32px;
+}
+.mobile-menu-links a {
+  display: block; padding: 14px 16px;
+  font-size: 18px; font-weight: 600; color: var(--ink);
+  border-radius: var(--r-md); text-decoration: none;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s, color 0.15s;
+}
+.mobile-menu-links a:last-child { border-bottom: none; }
+.mobile-menu-links a:hover { background: var(--accent-light); color: var(--accent); }
+.mobile-menu-actions { display: flex; flex-direction: column; gap: 10px; }
+.mobile-menu-actions .cta-primary,
+.mobile-menu-actions .cta-secondary {
+  width: 100%; justify-content: center; padding: 15px 24px; font-size: 16px;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   HAMBURGER MENU
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.hamburger {
+  display: none;
+  flex-direction: column; justify-content: center; align-items: center;
+  width: 38px; height: 38px; gap: 5px;
+  background: none; border: 1px solid var(--border);
+  border-radius: 8px; cursor: pointer; padding: 0;
+  flex-shrink: 0;
+}
+.hamburger span {
+  display: block; width: 16px; height: 1.5px;
+  background: var(--ink); border-radius: 2px;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+.mobile-nav {
+  display: none;
+  position: fixed; top: 64px; left: 0; right: 0; z-index: 850;
+  background: rgba(255,255,255,0.98);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 20px 24px;
+  flex-direction: column; gap: 4px;
+  box-shadow: var(--shadow-lg);
+}
+.mobile-nav.open { display: flex; }
+.mobile-nav a {
+  display: block; padding: 12px 16px;
+  font-size: 16px; font-weight: 500; color: var(--ink3);
+  border-radius: var(--r-md); transition: background 0.15s;
+  text-decoration: none;
+}
+.mobile-nav a:hover { background: var(--off2); }
+.mobile-nav .mobile-cta {
+  margin-top: 8px; padding: 14px 16px; text-align: center;
+  background: var(--ink); color: white; font-weight: 600;
+  border-radius: var(--r-md);
+}
+.mobile-nav .mobile-cta:hover { background: var(--ink3); }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   RESPONSIVE — TABLET (≤1024px)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 1024px) {
+  /* Layout */
+  .wrap, .wrap-sm { padding: 0 28px; }
+  #nav .nav-inner { padding: 0 28px; }
+
+  /* Nav */
+  .nav-center { display: none; }
+  .btn-ghost { display: none; }
+  .hamburger { display: flex; }
+
+  /* Hero */
+  #hero { padding: 120px 0 80px; }
+  .hero-content { grid-template-columns: 1fr; gap: 0; }
+  .hero-right { display: none; }
+  .hero-left { text-align: center; }
+  .hero-eyebrow { justify-content: center; }
+  .hero-actions { justify-content: center; flex-wrap: wrap; }
+  .hero-trust { justify-content: center; }
+  .hero-p { max-width: 580px; margin-left: auto; margin-right: auto; }
+  .hero-h1 { font-size: clamp(38px, 6vw, 58px); }
+
+  /* Logobar */
+  .logobar-inner { flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .logobar-label { width: 100%; text-align: center; margin-right: 0; margin-bottom: 4px; }
+
+  /* Services bento */
+  .services-bento { display: flex; flex-direction: column; gap: 14px; }
+
+  /* How it works */
+  .how-grid { grid-template-columns: 1fr 1fr; }
+  .how-step::after { display: none; }
+
+  /* Vision */
+  .vision-layout { grid-template-columns: 1fr; gap: 48px; }
+
+  /* About */
+  .about-layout { grid-template-columns: 1fr; gap: 48px; }
+  .ceo-wrap { position: static; }
+
+  /* Platform */
+  .modes-layout { grid-template-columns: 1fr; gap: 20px; }
+
+  /* Testimonials */
+  .testi-layout { grid-template-columns: 1fr 1fr; gap: 16px; }
+  .testi-card.hero-testi { grid-column: span 2; }
+
+  /* Footer */
+  .footer-top { grid-template-columns: 1fr 1fr; gap: 36px; }
+  .footer-brand-col { grid-column: span 2; }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   RESPONSIVE — MOBILE (≤768px)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 768px) {
+  .wrap, .wrap-sm { padding: 0 20px; }
+  #nav .nav-inner { padding: 0 20px; }
+  .section { padding: 72px 0; }
+
+  /* Nav */
+  .btn-dark { padding: 8px 14px; font-size: 13px; gap: 4px; }
+  .btn-dark svg { display: none; }
+  .nav-logo-wordmark sup { display: none; }
+
+  /* Hero */
+  #hero { padding: 100px 0 64px; }
+  .hero-h1 { font-size: clamp(32px, 8.5vw, 46px); letter-spacing: -1.5px; }
+  .hero-p { font-size: 16px; }
+  .hero-actions { flex-direction: column; align-items: stretch; gap: 10px; width: 100%; }
+  .cta-primary, .cta-secondary { width: 100%; justify-content: center; }
+  .hero-trust { flex-direction: column; align-items: center; gap: 8px; font-size: 12px; }
+  .hero-eyebrow { font-size: 11px; padding: 4px 10px 4px 5px; }
+
+  /* Logobar */
+  .logobar-item { padding: 6px 12px; font-size: 12px; }
+  .logobar-icon { font-size: 13px; }
+
+  /* Services */
+  .services-intro { margin-bottom: 40px; }
+  .bento { padding: 26px 22px; }
+  .bento-title { font-size: 18px; }
+  .bento-desc { font-size: 14px; }
+  .code-chip { font-size: 15px; letter-spacing: 2px; }
+
+  /* How it works */
+  .how-grid { grid-template-columns: 1fr; border-radius: var(--r-lg); }
+  .how-step { padding: 26px 22px; }
+
+  /* Vision */
+  .vision-statement { font-size: clamp(20px, 5vw, 28px); }
+  .v-pillar { padding: 16px 18px; }
+  .roadmap-timeline { margin-top: 0; }
+
+  /* About */
+  .about-intro { font-size: 17px; }
+  .about-body { font-size: 15px; }
+  .values-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .val-card { padding: 18px; }
+  .ceo-card-top { padding: 28px 22px 20px; }
+  .ceo-card-bottom { padding: 20px 22px; }
+  .ceo-initials { width: 58px; height: 58px; font-size: 20px; }
+  .ceo-name-new { font-size: 22px; }
+
+  /* Platform */
+  .mode-top { padding: 30px 26px 22px; }
+  .mode-title-new { font-size: 22px; }
+  .mode-bottom { padding: 22px 26px; }
+
+  /* Testimonials */
+  .testi-layout { grid-template-columns: 1fr; }
+  .testi-card.hero-testi { grid-column: span 1; }
+  .testi-card { padding: 24px; }
+
+  /* CTA */
+  #cta-band { padding: 80px 0; }
+  .cta-band-title { font-size: clamp(30px, 8vw, 46px); letter-spacing: -1.5px; }
+  .cta-band-sub { font-size: 15px; }
+  .cta-band-btns { flex-direction: column; align-items: stretch; gap: 10px; }
+  .btn-white, .btn-outline-white { width: 100%; justify-content: center; }
+
+  /* Footer */
+  footer { padding: 56px 0 28px; }
+  .footer-top { grid-template-columns: 1fr; gap: 32px; }
+  .footer-brand-col { grid-column: span 1; }
+  .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+  .footer-legal { justify-content: center; flex-wrap: wrap; }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   RESPONSIVE — SMALL MOBILE (≤430px)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 430px) {
+  .wrap, .wrap-sm { padding: 0 16px; }
+  #nav .nav-inner { padding: 0 16px; }
+  .section { padding: 56px 0; }
+
+  #hero { padding: 90px 0 52px; }
+  .hero-h1 { font-size: clamp(28px, 9.5vw, 38px); letter-spacing: -1px; }
+  .hero-eyebrow { font-size: 10px; }
+
+  .h2 { font-size: clamp(26px, 7.5vw, 34px); letter-spacing: -0.8px; }
+  .lead { font-size: 15px; }
+
+  .bento { padding: 20px 16px; border-radius: var(--r-md); }
+  .bento-chip { font-size: 10px; padding: 4px 8px; margin-bottom: 16px; }
+  .bento-title { font-size: 16px; }
+
+  .values-grid { grid-template-columns: 1fr; }
+  .ceo-tags { gap: 6px; }
+  .ceo-tag { font-size: 11px; padding: 4px 10px; }
+
+  .how-step { padding: 22px 16px; }
+  .step-icon-wrap { width: 44px; height: 44px; font-size: 20px; border-radius: 10px; }
+
+  .submission-size { display: none; }
+  .submission-filename { font-size: 12px; }
+
+  .logobar-item { font-size: 11px; padding: 5px 10px; }
+  .logobar-inner { gap: 6px; }
+
+  .missing-pill, .submitted-pill { font-size: 11px; padding: 7px 10px; }
+
+  .footer-social a { width: 32px; height: 32px; font-size: 13px; }
+  .nav-logo-wordmark { font-size: 15px; }
+  .nav-logo-icon { width: 28px; height: 28px; border-radius: 6px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ━━━━━━━━━━━━━━ NAV ━━━━━━━━━━━━━━ -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="#hero" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg viewBox="0 0 20 20"><path d="M3 5h14v2H3zm0 4h10v2H3zm0 4h7v2H3z"/></svg>
+      </div>
+      <span class="nav-logo-wordmark">WitzClass <sup>Beta</sup></span>
+    </a>
+    <div class="nav-center">
+      <a href="#services">Services</a>
+      <a href="#how">How It Works</a>
+      <a href="#vision">Vision</a>
+      <a href="#about">About</a>
+      <a href="#platform">Platform</a>
+    </div>
+    <div class="nav-right">
+      <button class="btn-dark">
+        Get Started
+        <svg viewBox="0 0 14 14"><path d="M1 7h12M7 1l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE MENU DRAWER -->
+<div class="mobile-menu" id="mobileMenu">
+  <nav class="mobile-menu-links">
+    <a href="#services" class="mobile-link">Services</a>
+    <a href="#how" class="mobile-link">How It Works</a>
+    <a href="#vision" class="mobile-link">Vision</a>
+    <a href="#about" class="mobile-link">About</a>
+    <a href="#platform" class="mobile-link">Platform</a>
+    <a href="#testimonials" class="mobile-link">Testimonials</a>
+  </nav>
+  <div class="mobile-menu-actions">
+    <button class="cta-primary">Get Started →</button>
+  </div>
+</div>
+
+<!-- ━━━━━━━━━━━━━━ HERO ━━━━━━━━━━━━━━ -->
+<section id="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-dots"></div>
+  <div class="wrap">
+    <div class="hero-content">
+      <div class="hero-left">
+        <div class="hero-eyebrow">
+          <div class="hero-eyebrow-dot"></div>
+          <span class="hero-eyebrow-text">Now Live — Free for Schools</span>
+        </div>
+        <h1 class="hero-h1">Assignment <em>infrastructure</em><br>for modern education</h1>
+        <p class="hero-p">WitzClass eliminates paper excuses, tracks every submission in real time, and lets teachers grade when they're ready. Built for schools and tutors who take accountability seriously.</p>
+        <div class="hero-actions">
+          <a href="#how" class="cta-secondary">See how it works</a>
+        </div>
+        <div class="hero-trust">
+          <div class="hero-trust-avatars">
+            <span style="background:#2563eb">M</span>
+            <span style="background:#0ea5e9">K</span>
+            <span style="background:#10b981">D</span>
+            <span style="background:#f59e0b">A</span>
+          </div>
+          <span>Trusted by teachers and school admins</span>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="mockup-frame">
+          <div class="mockup-topbar">
+            <div class="mockup-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="mockup-url">app.witzclass.io/classroom/mathematics</div>
+          </div>
+          <div class="mockup-body">
+            <div class="mockup-header">
+              <div class="mockup-title">Mathematics — Grade 10</div>
+              <div class="mockup-badge">18 / 24 submitted</div>
+            </div>
+            <div class="mockup-assignment">
+              <div class="mockup-assignment-icon" style="background:#eff6ff">📄</div>
+              <div class="mockup-assignment-info">
+                <div class="mockup-assignment-name">Chapter 3 — Quadratic Equations</div>
+                <div class="mockup-assignment-meta">Due today · 18 submitted</div>
+              </div>
+              <div class="mockup-assignment-status s-submitted">Graded</div>
+            </div>
+            <div class="mockup-assignment">
+              <div class="mockup-assignment-icon" style="background:#fffbeb">📷</div>
+              <div class="mockup-assignment-info">
+                <div class="mockup-assignment-name">Handwritten Problem Set 4</div>
+                <div class="mockup-assignment-meta">Due tomorrow · 11 submitted</div>
+              </div>
+              <div class="mockup-assignment-status s-pending">Open</div>
+            </div>
+            <div class="mockup-assignment">
+              <div class="mockup-assignment-icon" style="background:#fef2f2">⏰</div>
+              <div class="mockup-assignment-info">
+                <div class="mockup-assignment-name">Mid-term Essay Draft</div>
+                <div class="mockup-assignment-meta">Overdue · 3 late submissions</div>
+              </div>
+              <div class="mockup-assignment-status s-late">2 Missing</div>
+            </div>
+            <div class="mockup-divider"></div>
+            <div class="mockup-stats">
+              <div class="mockup-stat">
+                <div class="mockup-stat-num">24</div>
+                <div class="mockup-stat-label">Students</div>
+              </div>
+              <div class="mockup-stat">
+                <div class="mockup-stat-num">18</div>
+                <div class="mockup-stat-label">Submitted</div>
+              </div>
+              <div class="mockup-stat">
+                <div class="mockup-stat-num" style="color:#ef4444">6</div>
+                <div class="mockup-stat-label">Missing</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="floating-notif">
+          <div class="notif-icon">✅</div>
+          <div>
+            <div class="notif-title">New submission received</div>
+            <div class="notif-sub">Adebayo just submitted Chapter 3 · now</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━ LOGO BAR ━━━━━━━━━━━━━━ -->
+<div id="logobar">
+  <div class="wrap">
+    <div class="logobar-inner">
+      <span class="logobar-label">Built for</span>
+      <div class="logobar-item"><span class="logobar-icon">🏫</span> Secondary Schools</div>
+      <div class="logobar-item"><span class="logobar-icon">🎓</span> Universities</div>
+      <div class="logobar-item"><span class="logobar-icon">🧑‍💻</span> Private Tutors</div>
+      <div class="logobar-item"><span class="logobar-icon">📱</span> EdTech Platforms</div>
+      <div class="logobar-item"><span class="logobar-icon">🌍</span> Remote Classrooms</div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━━━━━━━━━━━━ SERVICES ━━━━━━━━━━━━━━ -->
+<section id="services" class="section">
+  <div class="wrap">
+    <div class="services-intro fade-up">
+      <div class="eyebrow">What We Do</div>
+      <h2 class="h2">Everything teachers need.<br>Nothing they <em>don't</em>.</h2>
+      <p class="lead">Focused, reliable assignment infrastructure that handles collection, tracking, and grading — so teachers can focus on teaching.</p>
+    </div>
+    <div class="services-bento">
+      <!-- Big card -->
+      <div class="bento bento-a fade-up d1">
+        <div class="bento-chip chip-blue">Core Feature</div>
+        <div class="bento-title">Multi-Format Submission System</div>
+        <div class="bento-desc">Students submit however works best for them. Typed text, PDF, Word documents, or a photo of handwritten work. Every format accepted, stored securely, instantly visible to the teacher.</div>
+        <div class="bento-visual">
+          <div class="submission-row">
+            <div class="submission-type" style="background:#eff6ff">📄</div>
+            <span class="submission-filename">chapter3_essay.pdf</span>
+            <span class="submission-size">2.4 MB</span>
+            <span class="submission-check">✓</span>
+          </div>
+          <div class="submission-row">
+            <div class="submission-type" style="background:#f0fdf4">📷</div>
+            <span class="submission-filename">handwritten_notes.jpg</span>
+            <span class="submission-size">1.1 MB</span>
+            <span class="submission-check">✓</span>
+          </div>
+          <div class="submission-row">
+            <div class="submission-type" style="background:#fffbeb">📝</div>
+            <span class="submission-filename">typed_response.txt</span>
+            <span class="submission-size">480 B</span>
+            <span class="submission-check">✓</span>
+          </div>
+        </div>
+      </div>
+      <!-- Medium card -->
+      <div class="bento bento-b fade-up d2">
+        <div class="bento-chip chip-green">Grading</div>
+        <div class="bento-title">In-Platform Grading & Feedback</div>
+        <div class="bento-desc">Score, percentage, letter grade, and personal written feedback. All in one place. Students are notified the instant their work is graded.</div>
+        <div class="grade-display">
+          <div class="grade-circle">
+            <div class="grade-letter">A+</div>
+            <div class="grade-pct">94%</div>
+          </div>
+          <div class="grade-info">
+            <strong>94 / 100</strong>
+            Excellent work. Clear reasoning throughout.
+          </div>
+        </div>
+      </div>
+      <!-- Small 1 -->
+      <div class="bento bento-c fade-up d1">
+        <div class="bento-chip chip-ink">Join Codes</div>
+        <div class="bento-title">Instant Classroom Enrollment</div>
+        <div class="bento-desc">Share a code. Students join in seconds. No admin setup required.</div>
+        <div style="text-align:center">
+          <div class="code-chip">WTZ-X9A4F</div>
+          <div class="code-chip-label">Classroom Join Code</div>
+        </div>
+      </div>
+      <!-- Small 2 -->
+      <div class="bento bento-d fade-up d2">
+        <div class="bento-chip chip-amber">Tracking</div>
+        <div class="bento-title">Real-Time Submission Tracker</div>
+        <div class="bento-desc">See who submitted, who's late, and who's missing — at a glance, always up to date.</div>
+        <div style="margin-top:20px">
+          <div class="submitted-pill">✓ &nbsp;Ngozi Adeyemi — Submitted on time</div>
+          <div class="submitted-pill">✓ &nbsp;Chukwuemeka B. — Submitted (late)</div>
+          <div class="missing-pill">✗ &nbsp;Toluwani Osei — Not submitted yet</div>
+        </div>
+      </div>
+      <!-- Small 3 -->
+      <div class="bento bento-e fade-up d3">
+        <div class="bento-chip chip-blue">Notifications</div>
+        <div class="bento-title">Real-Time Alerts for Everyone</div>
+        <div class="bento-desc">WebSocket-powered instant notifications. New assignment, submission received, grade posted — zero delay.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━ HOW IT WORKS ━━━━━━━━━━━━━━ -->
+<section id="how" class="section section-alt">
+  <div class="wrap">
+    <div style="text-align:center;max-width:580px;margin:0 auto" class="fade-up">
+      <div class="eyebrow" style="justify-content:center">The Process</div>
+      <h2 class="h2" style="text-align:center">From setup to <em>graded</em><br>in four simple steps</h2>
+    </div>
+    <div class="how-grid fade-up d1">
+      <div class="how-step">
+        <div class="step-number">01 — School</div>
+        <div class="step-icon-wrap">🏫</div>
+        <div class="step-title">School Registers</div>
+        <div class="step-desc">The school admin registers, receives a unique school code, and shares it with their teachers to join the institution.</div>
+      </div>
+      <div class="how-step">
+        <div class="step-number">02 — Teacher</div>
+        <div class="step-icon-wrap">👨‍🏫</div>
+        <div class="step-title">Teacher Creates Classroom</div>
+        <div class="step-desc">Teacher joins the school and creates a classroom. A WTZ join code is auto-generated and shared with students.</div>
+      </div>
+      <div class="how-step">
+        <div class="step-number">03 — Student</div>
+        <div class="step-icon-wrap">🎒</div>
+        <div class="step-title">Students Enroll</div>
+        <div class="step-desc">Students enter the join code in seconds — no admin provisioning, no email invites. Just the code and they're in.</div>
+      </div>
+      <div class="how-step">
+        <div class="step-number">04 — Cycle</div>
+        <div class="step-icon-wrap">✅</div>
+        <div class="step-title">Assign · Submit · Grade</div>
+        <div class="step-desc">Teacher posts assignments, students submit digitally, teacher grades with scores and feedback. Everyone notified in real time.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━ VISION ━━━━━━━━━━━━━━ -->
+<section id="vision" class="section section-dark">
+  <div class="wrap">
+    <div class="vision-layout">
+      <div class="vision-left fade-up">
+        <div class="eyebrow" style="color:#93c5fd">Our Vision</div>
+        <blockquote class="vision-statement">
+          To become the <em>default assignment infrastructure</em> for education, everywhere.
+        </blockquote>
+        <p class="vision-body">WitzClass is not trying to be another Google Classroom. We are purpose-built assignment infrastructure — fast to adopt, simple to use, and designed to scale from a single tutor to a national education platform serving millions.</p>
+        <p class="vision-body">We believe every school — regardless of size or budget — should have access to reliable, modern assignment management.</p>
+        <div class="vision-pillars">
+          <div class="v-pillar">
+            <div class="v-pillar-num">01</div>
+            <div>
+              <div class="v-pillar-title">Focused, Not Bloated</div>
+              <div class="v-pillar-desc">We solve one problem exceptionally well. No unnecessary features that overwhelm teachers who just want to collect work.</div>
+            </div>
+          </div>
+          <div class="v-pillar">
+            <div class="v-pillar-num">02</div>
+            <div>
+              <div class="v-pillar-title">Scalable by Design</div>
+              <div class="v-pillar-desc">Solo tutor to multi-school institution — WitzClass handles any scale without additional configuration or cost.</div>
+            </div>
+          </div>
+          <div class="v-pillar">
+            <div class="v-pillar-num">03</div>
+            <div>
+              <div class="v-pillar-title">Infrastructure, Not Just a Tool</div>
+              <div class="v-pillar-desc">Via SDK, any LMS can embed WitzClass — making us an invisible but essential layer inside larger educational systems.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fade-up d2">
+        <div class="roadmap-timeline">
+          <div class="rt-header">Product Roadmap</div>
+          <div class="rt-item">
+            <div class="rt-indicator"><div class="rt-dot rt-dot-done"></div><div class="rt-line"></div></div>
+            <div>
+              <div class="rt-phase">Phase 1 <span class="rt-tag rt-tag-done">Complete</span></div>
+              <div class="rt-title">Core Platform</div>
+              <div class="rt-desc">School system, join codes, classrooms, multi-format submissions, grading engine, real-time notifications.</div>
+            </div>
+          </div>
+          <div class="rt-item">
+            <div class="rt-indicator"><div class="rt-dot rt-dot-now"></div><div class="rt-line"></div></div>
+            <div>
+              <div class="rt-phase">Phase 2 <span class="rt-tag rt-tag-now">In Progress</span></div>
+              <div class="rt-title">Security & Scale</div>
+              <div class="rt-desc">Full data isolation audit, cloud file storage (S3), API pagination, rate limiting, Docker + CI/CD pipeline.</div>
+            </div>
+          </div>
+          <div class="rt-item">
+            <div class="rt-indicator"><div class="rt-dot rt-dot-next"></div><div class="rt-line"></div></div>
+            <div>
+              <div class="rt-phase">Phase 3</div>
+              <div class="rt-title">Analytics Dashboard</div>
+              <div class="rt-desc">Class averages, performance trends, participation charts, and teacher insights. PWA mobile support.</div>
+            </div>
+          </div>
+          <div class="rt-item">
+            <div class="rt-indicator"><div class="rt-dot rt-dot-next"></div></div>
+            <div>
+              <div class="rt-phase">Phase 4</div>
+              <div class="rt-title">SDK for LMS Platforms</div>
+              <div class="rt-desc">Open SDK enabling any external LMS to embed WitzClass assignment APIs. White-label compatible.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━ ABOUT ━━━━━━━━━━━━━━ -->
+<section id="about" class="section">
+  <div class="wrap">
+    <div class="fade-up">
+      <div class="eyebrow">Our Story</div>
+      <h2 class="h2">Built from a real <em>frustration</em>.</h2>
+    </div>
+    <div class="about-layout">
+      <div class="ceo-wrap fade-up d1">
+        <div class="ceo-card-new">
+          <div class="ceo-card-top">
+            <div class="ceo-initials">A</div>
+            <div class="ceo-name-new">Asiwaju</div>
+            <div class="ceo-role-new">Founder & Chief Executive Officer</div>
+          </div>
+          <div class="ceo-card-bottom">
+            <p class="ceo-blockquote">"I built WitzClass because I was tired of watching great teachers waste time chasing paper. Every minute spent managing homework is a minute stolen from actual teaching."</p>
+            <div class="ceo-tags">
+              <span class="ceo-tag">EdTech Founder</span>
+              <span class="ceo-tag">Full-Stack Engineer</span>
+              <span class="ceo-tag">Education Advocate</span>
+              <span class="ceo-tag">Django & React</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="about-text-col fade-up d2">
+        <p class="about-intro">WitzClass was born from a simple, persistent problem — teachers drowning in paper, and students escaping accountability with three words: "I forgot it."</p>
+        <p class="about-body">We started with a question: what if submitting an assignment was as easy as sharing a code? What if a teacher could see — at a glance — exactly who had submitted, who was late, and who hadn't bothered at all?</p>
+        <p class="about-body">What if grading didn't mean shuffling stacks of paper or chasing students down corridors? What if the entire assignment lifecycle lived in one simple, reliable system?</p>
+        <p class="about-body">That question became WitzClass. We started with the teacher's real problems and built backwards to the simplest possible solution — a platform that disappears into the background and lets education happen.</p>
+        <div class="values-grid">
+          <div class="val-card">
+            <div class="val-icon">🎯</div>
+            <div class="val-title">Simplicity First</div>
+            <div class="val-desc">Every feature earns its place. Nothing ships unless it genuinely reduces friction.</div>
+          </div>
+          <div class="val-card">
+            <div class="val-icon">🔐</div>
+            <div class="val-title">Security by Default</div>
+            <div class="val-desc">School A cannot access School B's data. Isolation is built in, not bolted on.</div>
+          </div>
+          <div class="val-card">
+            <div class="val-icon">⚡</div>
+            <div class="val-title">Speed to Value</div>
+            <div class="val-desc">First classroom in under 2 minutes. Real value before you finish your coffee.</div>
+          </div>
+          <div class="val-card">
+            <div class="val-icon">🌍</div>
+            <div class="val-title">Accessible by Default</div>
+            <div class="val-desc">Built for schools in any environment — any bandwidth, any device, any context.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━ PLATFORM ━━━━━━━━━━━━━━ -->
+<section id="platform" class="section section-alt">
+  <div class="wrap">
+    <div style="text-align:center;max-width:600px;margin:0 auto" class="fade-up">
+      <div class="eyebrow" style="justify-content:center">Platform Strategy</div>
+      <h2 class="h2" style="text-align:center">Two ways to use <em>one</em><br>powerful platform</h2>
+      <p class="lead" style="margin:0 auto">Deploy WitzClass as a complete system for your school, or embed our services directly into your existing LMS via SDK.</p>
+    </div>
+    <div class="modes-layout">
+      <div class="mode-card-new mode-standalone fade-up d1">
+        <div class="mode-top">
+          <div class="mode-label">Standalone Platform</div>
+          <div class="mode-title-new">Complete System for Schools & Tutors</div>
+          <div class="mode-desc-new">A fully self-contained assignment management system. Register, create classrooms, share join codes, and go — no additional setup required.</div>
+        </div>
+        <div class="mode-bottom">
+          <ul class="mode-feature-list standalone-list">
+            <li>School registration with unique school codes</li>
+            <li>Teacher onboarding via school code</li>
+            <li>Classroom creation with WTZ join codes</li>
+            <li>Full assignment lifecycle — post, submit, grade</li>
+            <li>School admin dashboard with full visibility</li>
+            <li>Works for solo tutors and full institutions alike</li>
+          </ul>
+        </div>
+      </div>
+      <div class="mode-card-new mode-sdk fade-up d2">
+        <div class="mode-top">
+          <div class="mode-label">Integration SDK — Coming Soon</div>
+          <div class="mode-title-new">Embed WitzClass Into Any LMS</div>
+          <div class="mode-desc-new">External Learning Management Systems plug WitzClass directly into their platform via our SDK — without rebuilding assignment infrastructure from scratch.</div>
+        </div>
+        <div class="mode-bottom">
+          <ul class="mode-feature-list sdk-list">
+            <li>RESTful assignment creation & distribution APIs</li>
+            <li>Embeddable submission collection UI components</li>
+            <li>Grading & tracking as a managed service</li>
+            <li>White-label compatible</li>
+            <li>Swagger/OpenAPI documentation</li>
+            <li>Webhooks for real-time event integration</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━ TESTIMONIALS ━━━━━━━━━━━━━━ -->
+<section id="testimonials" class="section">
+  <div class="wrap">
+    <div style="text-align:center;max-width:520px;margin:0 auto" class="fade-up">
+      <div class="eyebrow" style="justify-content:center">Testimonials</div>
+      <h2 class="h2" style="text-align:center">What educators <em>say</em></h2>
+    </div>
+    <div class="testi-layout">
+      <div class="testi-card hero-testi fade-up d1">
+        <div class="testi-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <p class="testi-quote">"Before WitzClass, I spent 30 minutes every lesson chasing paper. Now I open the dashboard and see exactly who submitted and who's missing. It's fundamentally changed how I manage my classroom."</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:#2563eb">M</div>
+          <div>
+            <div class="testi-name">Mrs. Adeyemi</div>
+            <div class="testi-role">Secondary School Teacher, Lagos</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card fade-up d2">
+        <div class="testi-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <p class="testi-quote">"The join code system is brilliant. I shared the code in class and 32 students were enrolled within 10 minutes. Total setup time was less than my morning coffee break."</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:#0ea5e9">K</div>
+          <div>
+            <div class="testi-name">Mr. Okonkwo</div>
+            <div class="testi-role">Mathematics Tutor, Abuja</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card fade-up d3">
+        <div class="testi-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <p class="testi-quote">"As a principal, having full visibility across all teachers, classrooms, and submission rates from a single dashboard is something I didn't know I needed until I had it."</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:#10b981">D</div>
+          <div>
+            <div class="testi-name">Dr. Nwosu</div>
+            <div class="testi-role">School Principal, Port Harcourt</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━ CTA BAND ━━━━━━━━━━━━━━ -->
+<section id="cta-band">
+  <div class="wrap">
+    <div class="cta-band-inner fade-up">
+      <h2 class="cta-band-title">Ready to go <em>paperless</em>?</h2>
+      <p class="cta-band-sub">Join the schools and tutors already using WitzClass to digitise their assignment workflow. Setup takes under 5 minutes. No credit card needed.</p>
+      <div class="cta-band-btns">
+        <a href="#services" class="btn-outline-white">Explore Features</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━ FOOTER ━━━━━━━━━━━━━━ -->
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand-col">
+        <div class="footer-logo-row">
+          <div class="footer-logo-box">
+            <svg viewBox="0 0 20 20"><path d="M3 5h14v2H3zm0 4h10v2H3zm0 4h7v2H3z"/></svg>
+          </div>
+          <span class="footer-wordmark">WitzClass</span>
+        </div>
+        <p class="footer-tagline">Purpose-built assignment infrastructure for schools, tutors, and the platforms that serve them.</p>
+        <div class="footer-social">
+          <a href="https://github.com/Asiwaju24/Edtech-assignment" target="_blank" title="GitHub">⌨</a>
+          <a href="https://x.com/OlaniyanTaslim?t=KWVaXH5DfATrQ74wCCTFTA&s=09" title="Twitter">𝕏</a>
+          <a href="https://www.linkedin.com/in/olaniyan-taslim-3a80212aa" title="LinkedIn">in</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-head">Platform</div>
+        <ul class="footer-links">
+          <li><a href="#services">Services</a></li>
+          <li><a href="#how">How It Works</a></li>
+          <li><a href="#platform">Deployment Modes</a></li>
+          <li><a href="#cta-band">Get Started</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-head">Company</div>
+        <ul class="footer-links">
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#about">Our CEO</a></li>
+          <li><a href="#vision">Vision & Roadmap</a></li>
+          <li><a href="#testimonials">Testimonials</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-head">Developers</div>
+        <ul class="footer-links">
+          <li><a href="#">API Documentation</a></li>
+          <li><a href="#">SDK (Coming Soon)</a></li>
+          <li><a href="https://github.com/Asiwaju24/Edtech-assignment" target="_blank">GitHub Repo</a></li>
+          <li><a href="#">Changelog</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 WitzClass. All rights reserved.</div>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Security</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── Hamburger mobile menu
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+const body = document.body;
+
+hamburger.addEventListener('click', () => {
+  const isOpen = mobileMenu.classList.toggle('open');
+  hamburger.classList.toggle('open', isOpen);
+  body.style.overflow = isOpen ? 'hidden' : '';
+});
+
+// Close menu on link click
+document.querySelectorAll('.mobile-link').forEach(link => {
+  link.addEventListener('click', () => {
+    mobileMenu.classList.remove('open');
+    hamburger.classList.remove('open');
+    body.style.overflow = '';
+  });
+});
+
+// Close menu on outside click
+mobileMenu.addEventListener('click', (e) => {
+  if (e.target === mobileMenu) {
+    mobileMenu.classList.remove('open');
+    hamburger.classList.remove('open');
+    body.style.overflow = '';
+  }
+});
+
+// ── Navbar on scroll
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('solid', window.scrollY > 20);
+}, { passive: true });
+
+// ── Active nav link
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-center a');
+const onScroll = () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 120) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+};
+window.addEventListener('scroll', onScroll, { passive: true });
+
+// ── Scroll reveal
+const fadeEls = document.querySelectorAll('.fade-up');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: 0.1 });
+fadeEls.forEach(el => io.observe(el));
+
+// ── Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  });
+});
+
+// ── Counter animation for hero stats (if any future stat counters)
+// Live notification cycling in mockup
+const notifMessages = [
+  { icon: '✅', title: 'New submission received', sub: 'Adebayo just submitted Chapter 3 · now' },
+  { icon: '🎯', title: 'Assignment graded', sub: 'Ngozi received 92/100 on Essay Draft · 2m ago' },
+  { icon: '🔔', title: 'New student enrolled', sub: 'Taiwo joined Mathematics — Grade 10 · 4m ago' },
+  { icon: '📝', title: 'Assignment posted', sub: 'Problem Set 5 posted · due Friday · 6m ago' },
+];
+let notifIdx = 0;
+const notifEl = document.querySelector('.floating-notif');
+if (notifEl) {
+  setInterval(() => {
+    notifIdx = (notifIdx + 1) % notifMessages.length;
+    const n = notifMessages[notifIdx];
+    notifEl.style.opacity = '0';
+    notifEl.style.transform = 'translateY(8px)';
+    setTimeout(() => {
+      notifEl.querySelector('.notif-icon').textContent = n.icon;
+      notifEl.querySelector('.notif-title').textContent = n.title;
+      notifEl.querySelector('.notif-sub').textContent = n.sub;
+      notifEl.style.opacity = '1';
+      notifEl.style.transform = 'translateY(0)';
+      notifEl.style.transition = 'opacity 0.4s, transform 0.4s';
+    }, 400);
+  }, 3500);
+}
+</script>
+</body>
+</html>
